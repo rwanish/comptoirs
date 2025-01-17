@@ -58,4 +58,18 @@ public class CommandeRepositoryTest {
         assertEquals(commandeAvecProduits, commande);
         assertEquals(2, commande.getLignes().size());
     }
+
+    @Autowired
+    private CommandeRepository commandeRepository;
+
+    @Test
+    public void testMontantArticles() {
+        Integer numeroCommande = 1; // Remplacez par un numéro valide dans la base
+        BigDecimal montant = commandeRepository.montantArticles(numeroCommande);
+
+        // Remplacez par la valeur attendue
+        BigDecimal montantAttendu = new BigDecimal("123.45");
+        assertEquals(montantAttendu, montant);
+    }
+
 }

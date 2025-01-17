@@ -3,8 +3,10 @@ package comptoirs;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
+import java.math.BigDecimal;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.SpringApplication;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
@@ -30,12 +32,21 @@ public class ConsoleApp implements CommandLineRunner {
     @Autowired
     private CommandeRepository commandeDAO;
 
-    @Override
-    /*
-     * Equivalent de la méthode 'main' pour une application Spring Boot
-     **/
-    public void run(String... args) throws Exception {
+    @Autowired
+    private CommandeRepository commandeRepository;
 
+    public static void main(String[] args) {
+        SpringApplication.run(ConsoleApp.class, args);
+    }
+
+    @Override
+    public void run(String... args) throws Exception {
+        // Test de la méthode montantArticles
+        Integer numeroCommande = 1; // Remplacez par un numéro existant
+        BigDecimal montant = commandeRepository.montantArticles(numeroCommande);
+        System.out.println("Le montant total des articles pour la commande " + numeroCommande + " est : " + montant);
+
+        // Les autres opérations :
         tapezEnterPourContinuer();
 
         log.info("Recherche par clé");
@@ -58,23 +69,23 @@ public class ConsoleApp implements CommandLineRunner {
         int codeCategorie = 1;
         List<UnitesCommandeesParProduit> resultat = produitDAO.produitsVendusJPQL(codeCategorie);
         resultat.forEach( // Une autre syntaxe pour itérer sur une liste !
-            ligne -> log.info("Pour {} on a vendu {} unités", ligne.getNomProduit(), ligne.getUnitesCommandees())
-        );        
-         
+                ligne -> log.info("Pour {} on a vendu {} unités", ligne.getNomProduit(), ligne.getUnitesCommandees())
+        );
+
         tapezEnterPourContinuer();
 
         log.info("Même requête en SQL natif");
         resultat = produitDAO.produitsVendusSQL(codeCategorie);
-        resultat.forEach( 
-            ligne -> log.info("Pour {} on a vendu {} unités", ligne.getNomProduit(), ligne.getUnitesCommandees())
-        );        
-      
-        tapezEnterPourContinuer();    
+        resultat.forEach(
+                ligne -> log.info("Pour {} on a vendu {} unités", ligne.getNomProduit(), ligne.getUnitesCommandees())
+        );
+
+        tapezEnterPourContinuer();
         log.info("Pour un client, on trouve son adresse 'Embedded'");
         Optional<Client> ocl = clientDAO.findById("BONAP");
         ocl.ifPresent(cl -> log.info("On a trouvé l'adresse de 'BONAP' : {}", cl.getAdresse()));
 
-        tapezEnterPourContinuer();    
+        tapezEnterPourContinuer();
         log.info("Recherche par nom de société");
         Client cli = clientDAO.findBySociete("Alfreds Futterkiste").orElseThrow();
         log.info("On a trouvé le client {}",cli);
@@ -86,7 +97,7 @@ public class ConsoleApp implements CommandLineRunner {
         tapezEnterPourContinuer();
         log.info("Nombre de produits différents commandés par chaque client");
         clientDAO.produitsParClient().forEach(
-            ppc -> log.info("Le client {} a commandé {} produits différents", ppc.getSociete(), ppc.getNombre())
+                ppc -> log.info("Le client {} a commandé {} produits différents", ppc.getSociete(), ppc.getNombre())
         );
     }
 
